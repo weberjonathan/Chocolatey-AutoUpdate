@@ -147,11 +147,40 @@ namespace CandyShop
         private void UpgradePage_UpgradeSelectedClick(object sender, EventArgs e)
         {
             SelectedPackages = UpgradePage.SelectedPackages;
-            if (SelectedPackages.Count > 0)
+
+            //if (SelectedPackages.Count > 0)
+            //{
+            //    this.DialogResult = DialogResult.OK;
+            //    this.Close();
+            //}
+
+            ChocolateyUpgradeMonitor monitor = new ChocolateyUpgradeMonitor();
+            
+            monitor.PackageFinished += new EventHandler((sender, e) =>
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                UpgradePage.PerformTotalProgressStep();
+            });
+
+            monitor.PackageProgressChanged += new EventHandler<PackageProgressChangedEventArgs>((sender, e) =>
+            {
+                UpgradePage.SetPackageProgress(e.Value);
+            });
+
+            try
+            {
+                ChocolateyWrapper.Upgrade(SelectedPackages, monitor);
             }
+            catch (ChocolateyException ex)
+            {
+                MessageBox.Show(
+                    $"An error occurred while executing Chocolatey: \"{ex.Message}\"",
+                    $"{Application.ProductName} Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+
+            // TODO success message ? exit ? ususally this form was just closed and things were left to Application Context
         }
 
         private void UpgradePage_CancelClick(object sender, EventArgs e)
