@@ -13,6 +13,14 @@ namespace CandyShop
         {
             InitializeComponent();
 
+            PanelProgress.Visible = true;
+
+            //
+            
+
+
+            //
+
             LstPackages.ItemChecked += LstPackages_ItemChecked;
             LstPackages.Resize += LstPackages_Resize;
             BtnUpgradeAll.Click += new EventHandler((sender, e) => { UpgradeAllClick?.Invoke(this, e); });
@@ -100,6 +108,27 @@ namespace CandyShop
             {
                 item.Checked = false;
             }
+        }
+        
+        public void SetPackageProgress(int progress)
+        {
+            ProgressBarPackage.Value = progress;
+        }
+
+        public void SetTotalProgressUpperBounds(int upper)
+        {
+            ProgressBarTotal.Maximum = upper;
+        }
+
+        public void PerformTotalProgressStep()
+        {
+            ProgressBarTotal.PerformStep();
+        }
+
+        public void ResetAllProgress()
+        {
+            ProgressBarPackage.Value = 0;
+            ProgressBarTotal.Value = 0;
         }
 
         private void LstPackages_ItemChecked(object sender, ItemCheckedEventArgs e)
