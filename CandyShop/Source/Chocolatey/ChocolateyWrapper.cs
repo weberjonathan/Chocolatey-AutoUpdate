@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CandyShop.Chocolatey
@@ -26,7 +30,7 @@ namespace CandyShop.Chocolatey
          */
 
         /// <exception cref="ChocolateyException"></exception>
-        public static void Upgrade(List<ChocolateyPackage> packages)
+        public static void Upgrade(List<ChocolateyPackage> packages, ChocolateyUpgradeMonitor monitor = null)
         {
             string argument = "";
             foreach (ChocolateyPackage pckg in packages)
@@ -36,7 +40,30 @@ namespace CandyShop.Chocolatey
 
             // launch process
             ChocolateyProcess p = new ChocolateyProcess($"upgrade {argument} -y");
-            p.Execute();
+
+            // TODO handle output in here; needs parsing
+            p.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
+            {
+
+            });
+            
+            p.ExecuteHidden();
+
+            // proof of concept to see progress bars are working
+            //if (monitor != null)
+            //{
+            //    for (int i = 0; i < 20; i++)
+            //    {
+            //        monitor.PackageProgress++;
+            //        Thread.Sleep(100);
+            //    }
+            //    monitor.PackageProgress = 80;
+                
+            //    Thread.Sleep(500);
+
+            //    monitor.PackageProgress = 100;
+            //    monitor.FinishedPackageCount++;
+            //}
         }
 
         /// <exception cref="ChocolateyException"></exception>
