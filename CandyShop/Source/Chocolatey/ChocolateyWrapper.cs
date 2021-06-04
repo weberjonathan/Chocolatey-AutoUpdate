@@ -42,11 +42,13 @@ namespace CandyShop.Chocolatey
             ChocolateyProcess p = new ChocolateyProcess($"upgrade {argument} -y");
 
             // TODO handle output in here; needs parsing
+            UpgradeOutReader upgradeOutReader = new UpgradeOutReader(monitor);
             p.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
             {
-
+                upgradeOutReader.ReadNext(e.Data);
+                // data is forwarded to monitor in upgradeOutReader
             });
-            
+
             p.ExecuteHidden();
 
             // proof of concept to see progress bars are working

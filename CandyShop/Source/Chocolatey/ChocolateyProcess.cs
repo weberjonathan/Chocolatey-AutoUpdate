@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace CandyShop.Chocolatey
 {
@@ -41,7 +42,12 @@ namespace CandyShop.Chocolatey
                 proc.OutputDataReceived += new DataReceivedEventHandler((sender, e) =>
                 {
                     OutputDataReceived?.Invoke(this, e);
-                    Output.Add(e.Data);
+                    if (e.Data != null)
+                    {
+                        Output.Add(e.Data);
+                        // if e.Data is null stream was closed
+                    }
+
                 });
                 // ---
 
@@ -113,6 +119,11 @@ namespace CandyShop.Chocolatey
                     {
                         currentBlock.Add(line);
                     }
+                }
+
+                if (currentBlock.Count > 0)
+                {
+                    rtn.Add(currentBlock);
                 }
             }
 
