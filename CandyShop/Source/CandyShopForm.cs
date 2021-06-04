@@ -1,4 +1,4 @@
-﻿using CandyShop.Chocolatey;
+﻿using CandyShop.Packages.Chocolatey;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;

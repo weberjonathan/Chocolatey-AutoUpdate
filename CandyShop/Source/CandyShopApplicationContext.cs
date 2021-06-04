@@ -1,4 +1,4 @@
-﻿using CandyShop.Chocolatey;
+﻿using CandyShop.Packages.Chocolatey;
 using CandyShop.Properties;
 using System;
 using System.Collections.Generic;

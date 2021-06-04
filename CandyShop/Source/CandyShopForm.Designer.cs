@@ -32,9 +32,9 @@
             this.MainPanel = new System.Windows.Forms.Panel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.TabUpgrade = new System.Windows.Forms.TabPage();
-            this.UpgradePage = new CandyShop.UpgradePage();
+            this.UpgradePage = new CandyShop.UpgradePageChoco();
             this.TabInstalled = new System.Windows.Forms.TabPage();
-            this.InstalledPage = new CandyShop.InstalledPage();
+            this.InstalledPage = new CandyShop.InstalledPageChoco();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.CandyShopMenu = new System.Windows.Forms.MenuStrip();
             this.MenuEdit = new System.Windows.Forms.ToolStripMenuItem();
@@ -233,11 +233,11 @@
         #endregion
         private System.Windows.Forms.Panel MainPanel;
         private System.Windows.Forms.ColumnHeader columnHeader1;
-        private UpgradePage UpgradePage;
+        private UpgradePageChoco UpgradePage;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage TabUpgrade;
         private System.Windows.Forms.TabPage TabInstalled;
-        private InstalledPage InstalledPage;
+        private InstalledPageChoco InstalledPage;
         private System.Windows.Forms.MenuStrip CandyShopMenu;
         private System.Windows.Forms.ToolStripMenuItem MenuExtras;
         private System.Windows.Forms.ToolStripMenuItem MenuExtrasCreateTask;
