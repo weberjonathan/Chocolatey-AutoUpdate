@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace CandyShop.Packages
 {
-    interface IPackageManager
+    public interface IPackageManager
     {
         void Upgrade(List<IPackage> packages);
         List<IPackage> GetOutdated();
