@@ -1,4 +1,5 @@
-﻿using CandyShop.Packages.Chocolatey;
+﻿using CandyShop.Packages;
+using CandyShop.Packages.Chocolatey;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
@@ -14,22 +15,27 @@ namespace CandyShop
         private const string TASKNAME = "CandyShopLaunch";
         private bool WindowsTaskExists; // TODO create Context or properties class that contains information like this
 
+        private IPackageManager _PackageManager;
+
         public CandyShopForm()
         {
+            _PackageManager = new ChocolateyWrapper(); // TODO allow choice
+
             InitializeComponent();
             GetInstalledAsync();
             GetOutdatedAsync();
         }
 
-        public CandyShopForm(List<ChocolateyPackage> outdatedPackages)
+        public CandyShopForm(IPackageManager packageManager, List<IPackage> outdatedPackages)
         {
             InitializeComponent();
             GetInstalledAsync();
+            this._PackageManager = packageManager;
             UpgradePage.OutdatedPackages = outdatedPackages;
             // TODO implement refresh that prompts on new outdated packages
         }
 
-        public List<ChocolateyPackage> SelectedPackages { get; set; }
+        public List<IPackage> SelectedPackages { get; set; }
 
         private void ChocoAutoUpdateForm_Load(object sender, EventArgs e)
         {
@@ -160,13 +166,11 @@ namespace CandyShop
             this.Close();
         }
 
-        
-
         private async void GetOutdatedAsync()
         {
             try
             {
-                List<ChocolateyPackage> packages = await ChocolateyWrapper.CheckOutdatedAsync();
+                List<IPackage> packages = await _PackageManager.GetOutdatedAsync();
                 UpgradePage.OutdatedPackages = packages;
             }
             catch (ChocolateyException)
@@ -179,7 +183,7 @@ namespace CandyShop
         {
             try
             {
-                List<ChocolateyPackage> packages = await ChocolateyWrapper.ListInstalledAsync();
+                List<IPackage> packages = await _PackageManager.GetInstalledAsync();
                 InstalledPage.Packages = packages;
             }
             catch (ChocolateyException)

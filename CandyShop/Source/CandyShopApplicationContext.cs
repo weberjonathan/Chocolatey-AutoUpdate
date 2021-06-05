@@ -1,4 +1,5 @@
-﻿using CandyShop.Packages.Chocolatey;
+﻿using CandyShop.Packages;
+using CandyShop.Packages.Chocolatey;
 using CandyShop.Properties;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace CandyShop
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        private IPackageManager packageManager = new ChocolateyWrapper();
 
         public CandyShopApplicationContext()
         {
@@ -75,12 +78,12 @@ namespace CandyShop
 
         private async void GetOutdatedAndShowNotification(NotifyIcon icon)
         {
-            List<ChocolateyPackage> packages = null;
+            List<IPackage> packages = null;
 
             // obtain outdated packages
             try
             {
-                packages = await ChocolateyWrapper.CheckOutdatedAsync();
+                packages = await packageManager.GetOutdatedAsync();
             }
             catch (ChocolateyException)
             {
@@ -128,9 +131,9 @@ namespace CandyShop
             return rtn;
         }
 
-        private CandyShopForm BuildFormWith(List<ChocolateyPackage> outdatedPackages)
+        private CandyShopForm BuildFormWith(List<IPackage> outdatedPackages)
         {
-            CandyShopForm rtn = new CandyShopForm(outdatedPackages);
+            CandyShopForm rtn = new CandyShopForm(packageManager, outdatedPackages);
             RegisterFormHandlers(rtn);
             return rtn;
         }
@@ -156,7 +159,7 @@ namespace CandyShop
             });
         }
 
-        private void LaunchUpgradeConsole(List<ChocolateyPackage> packages)
+        private void LaunchUpgradeConsole(List<IPackage> packages)
         {
             // setup watcher for desktop shortcuts
             Queue<string> shortcuts = new Queue<string>();
@@ -183,7 +186,7 @@ namespace CandyShop
 
                 try
                 {
-                    ChocolateyWrapper.Upgrade(packages);
+                    packageManager.Upgrade(packages);
                 }
                 catch (ChocolateyException e)
                 {

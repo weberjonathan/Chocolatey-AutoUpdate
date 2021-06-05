@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace CandyShop.Packages.Chocolatey
 {
-    public class ChocolateyWrapper
+    public class ChocolateyWrapper : IPackageManager
     {
         /* Parsing Chocolatey data
          *  Choco may add disclaimers and other text either above
@@ -26,7 +26,7 @@ namespace CandyShop.Packages.Chocolatey
          */
 
         /// <exception cref="ChocolateyException"></exception>
-        public static void Upgrade(List<ChocolateyPackage> packages)
+        public void Upgrade(List<IPackage> packages)
         {
             string argument = "";
             foreach (ChocolateyPackage pckg in packages)
@@ -40,7 +40,7 @@ namespace CandyShop.Packages.Chocolatey
         }
 
         /// <exception cref="ChocolateyException"></exception>
-        public static List<ChocolateyPackage> CheckOutdated()
+        public List<IPackage> GetOutdated()
         {
             List<ChocolateyPackage> packages = new List<ChocolateyPackage>();
 
@@ -91,17 +91,17 @@ namespace CandyShop.Packages.Chocolatey
                 }
             }
 
-            return addMetaPackageInformation(packages);
+            return new List<IPackage>(addMetaPackageInformation(packages));
         }
 
         /// <exception cref="ChocolateyException"></exception>
-        public static async Task<List<ChocolateyPackage>> CheckOutdatedAsync()
+        public async Task<List<IPackage>> GetOutdatedAsync()
         {
-            return await Task.Run(CheckOutdated);
+            return await Task.Run(GetOutdated);
         }
 
         /// <exception cref="ChocolateyException"></exception>
-        public static List<ChocolateyPackage> ListInstalled()
+        public List<IPackage> GetInstalled()
         {
             List<ChocolateyPackage> packages = new List<ChocolateyPackage>();
 
@@ -149,17 +149,17 @@ namespace CandyShop.Packages.Chocolatey
                 }
             }
 
-            return addMetaPackageInformation(packages);
+            return new List<IPackage>(addMetaPackageInformation(packages));
         }
 
         /// <exception cref="ChocolateyException"></exception>
-        public static async Task<List<ChocolateyPackage>> ListInstalledAsync()
+        public async Task<List<IPackage>> GetInstalledAsync()
         {
-            return await Task.Run(ListInstalled);
+            return await Task.Run(GetInstalled);
         }
 
         /// <exception cref="ChocolateyException"></exception>
-        public static string GetInfo(ChocolateyPackage package)
+        public string GetInfo(IPackage package)
         {
             StringBuilder rtn = new StringBuilder();
 
@@ -184,12 +184,12 @@ namespace CandyShop.Packages.Chocolatey
         }
 
         /// <exception cref="ChocolateyException"></exception>
-        public static async Task<string> GetInfoAsync(ChocolateyPackage package)
+        public async Task<string> GetInfoAsync(IPackage package)
         {
             return await Task.Run(() => GetInfo(package));
         }
 
-        private static List<ChocolateyPackage> addMetaPackageInformation(List<ChocolateyPackage> packages)
+        private List<ChocolateyPackage> addMetaPackageInformation(List<ChocolateyPackage> packages)
         {
             foreach (ChocolateyPackage childPackageCandidate in packages)
             {

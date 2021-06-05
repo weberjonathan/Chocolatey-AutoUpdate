@@ -1,4 +1,5 @@
-﻿using CandyShop.Packages.Chocolatey;
+﻿using CandyShop.Packages;
+using CandyShop.Packages.Chocolatey;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -7,7 +8,7 @@ namespace CandyShop
 {
     public partial class UpgradePage : UserControl
     {
-        private List<ChocolateyPackage> _OutdatedPackages = new List<ChocolateyPackage>();
+        private List<IPackage> _OutdatedPackages = new List<IPackage>();
 
         public UpgradePage()
         {
@@ -35,10 +36,10 @@ namespace CandyShop
             }
         }
 
-        public List<ChocolateyPackage> OutdatedPackages {
+        public List<IPackage> OutdatedPackages {
             get => _OutdatedPackages;
             set {
-                _OutdatedPackages.AddRange(value); // TODO surely this should not be added but assigned ?
+                _OutdatedPackages = value;
 
                 LblLoading.Visible = false;
 
@@ -65,9 +66,9 @@ namespace CandyShop
             }
         }
 
-        public List<ChocolateyPackage> SelectedPackages {
+        public List<IPackage> SelectedPackages {
             get {
-                List<ChocolateyPackage> rtn = new List<ChocolateyPackage>();
+                List<IPackage> rtn = new List<IPackage>();
                 foreach (ListViewItem item in LstPackages.CheckedItems)
                 {
                     rtn.Add(FindPackageByName(item.Text));
@@ -87,10 +88,16 @@ namespace CandyShop
 
         public void CheckNormalAndMetaItems()
         {
+            // method only relevant if data source is of Chocolatey
             foreach (ListViewItem item in LstPackages.Items)
             {
-                ChocolateyPackage pckg = FindPackageByName(item.Text);
-                item.Checked = !(pckg.HasMetaPackage && pckg.HasSuffix);
+                IPackage pckg = FindPackageByName(item.Text);
+
+                if (pckg is ChocolateyPackage)
+                {
+                    ChocolateyPackage chocoPackage = (ChocolateyPackage)pckg;
+                    item.Checked = !(chocoPackage.HasMetaPackage && chocoPackage.HasSuffix);
+                }
             }
         }
 
@@ -119,7 +126,7 @@ namespace CandyShop
         }
 
         // TODO why no dict?
-        private ChocolateyPackage FindPackageByName(string name)
+        private IPackage FindPackageByName(string name)
         {
             return _OutdatedPackages.Find(pckg => pckg.Name.Equals(name));
         }

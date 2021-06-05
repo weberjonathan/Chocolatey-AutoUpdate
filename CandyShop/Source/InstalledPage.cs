@@ -1,4 +1,5 @@
-﻿using CandyShop.Packages.Chocolatey;
+﻿using CandyShop.Packages;
+using CandyShop.Packages.Chocolatey;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -7,7 +8,7 @@ namespace CandyShop
 {
     public partial class InstalledPage : UserControl
     {
-        private List<ChocolateyPackage> _Packages = new List<ChocolateyPackage>();
+        private List<IPackage> _Packages = new List<IPackage>();
         private Dictionary<string, string> PackageDetailsCache = new Dictionary<string, string>();
 
         public InstalledPage()
@@ -29,7 +30,7 @@ namespace CandyShop
             });
         }
 
-        public List<ChocolateyPackage> Packages {
+        public List<IPackage> Packages {
             get => _Packages;
             set {
                 _Packages = value;
@@ -48,7 +49,7 @@ namespace CandyShop
             }
         }
 
-        public ChocolateyPackage SelectedPackage {
+        public IPackage SelectedPackage {
             get {
                 if (LstPackages.SelectedItems.Count > 0)
                 {
@@ -62,9 +63,12 @@ namespace CandyShop
             }
         }
 
+        public IPackageManager PackageManager { get; set; }
+
         private async void LstPackages_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (SelectedPackage == null) return;
+            if (PackageManager == null) return; // TODO log warning?
 
             TxtDetails.Text = "Loading ...";
 
@@ -74,7 +78,7 @@ namespace CandyShop
             {
                 try
                 {
-                    details = await ChocolateyWrapper.GetInfoAsync(SelectedPackage);
+                    details = await PackageManager.GetInfoAsync(SelectedPackage);
                     if (!PackageDetailsCache.ContainsKey(selectedPackageName))
                     {
                         PackageDetailsCache.Add(selectedPackageName, details);
