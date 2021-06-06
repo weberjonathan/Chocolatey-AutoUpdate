@@ -1,5 +1,6 @@
 ﻿using CandyShop.Packages;
 using CandyShop.Packages.Chocolatey;
+using CandyShop.Packages.Winget;
 using CandyShop.Properties;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace CandyShop
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
-        private IPackageManager packageManager = new ChocolateyWrapper();
+        private IPackageManager packageManager = new WingetManager(); // TODO allow choice
 
         public CandyShopApplicationContext()
         {

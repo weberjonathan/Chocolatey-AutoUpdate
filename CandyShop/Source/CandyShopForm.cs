@@ -1,5 +1,6 @@
 ﻿using CandyShop.Packages;
 using CandyShop.Packages.Chocolatey;
+using CandyShop.Packages.Winget;
 using Microsoft.Win32.TaskScheduler;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,16 @@ namespace CandyShop
 
         public CandyShopForm()
         {
-            _PackageManager = new ChocolateyWrapper(); // TODO allow choice
+            _PackageManager = new WingetManager(); // TODO allow choice
 
             InitializeComponent();
+            if (!(_PackageManager is ChocolateyProcess))
+            {
+                MenuEditSelectRelevant.Visible = false;
+                MenuHelpMetaPackages.Visible = false;
+            }
+
+
             GetInstalledAsync();
             GetOutdatedAsync();
         }

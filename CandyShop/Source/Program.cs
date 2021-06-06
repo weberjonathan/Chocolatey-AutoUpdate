@@ -1,4 +1,6 @@
+using CandyShop.Packages;
 using CandyShop.Packages.Chocolatey;
+using CandyShop.Packages.Winget;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +14,12 @@ namespace CandyShop
         [STAThread]
         static void Main(string[] args)
         {
+            WingetManager packageManager = new WingetManager();
+            List<IPackage> test = packageManager.GetInstalled();
+            string abc = test[0].Name;
+            string abc2 = ((WingetPackage) test[0]).Name;
+            string abc3 = ((WingetPackage)test[0]).Id;
+
             // check if Chocolatey is in path
             try
             {

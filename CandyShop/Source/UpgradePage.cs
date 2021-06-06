@@ -48,21 +48,36 @@ namespace CandyShop
                     BtnUpgradeSelected.Enabled = true;
                     BtnUpgradeAll.Enabled = true;
 
-                    foreach (ChocolateyPackage pckg in value)
+                    foreach (IPackage pckg in value)
                     {
-                        ListViewItem item = new ListViewItem(new string[]
+                        ListViewItem item;
+                        if (pckg is ChocolateyPackage)
                         {
-                            pckg.Name,
-                            pckg.Version,
-                            pckg.AvailableVersion,
-                            pckg.Pinned.ToString()
-                        });
+                            ChocolateyPackage chocoPackage = (ChocolateyPackage) pckg;
+                            item = new ListViewItem(new string[]
+                            {
+                                chocoPackage.Name,
+                                chocoPackage.Version,
+                                chocoPackage.AvailableVersion,
+                                chocoPackage.Pinned.ToString()
+                            });
+                        }
+                        else
+                        {
+                            item = new ListViewItem(new string[]
+                            {
+                                pckg.Name,
+                                pckg.Version,
+                                pckg.AvailableVersion,
+                            });
+                        }
 
                         LstPackages.Items.Add(item);
                     }
                 }
 
                 CheckNormalAndMetaItems();
+                LstPackages_Resize(this, EventArgs.Empty);
             }
         }
 
@@ -116,13 +131,20 @@ namespace CandyShop
 
         private void LstPackages_Resize(object sender, EventArgs e)
         {
-            const int pinnedWidth = 60;
-            int availWidth = LstPackages.Width - pinnedWidth - LstPackages.Margin.Left - LstPackages.Margin.Right - SystemInformation.VerticalScrollBarWidth;
+            if (OutdatedPackages.Count > 0)
+            {
+                int pinnedWidth = OutdatedPackages[0] is ChocolateyPackage ? 60 : 0;
+                int availWidth = LstPackages.Width - pinnedWidth - LstPackages.Margin.Left - LstPackages.Margin.Right - SystemInformation.VerticalScrollBarWidth;
 
-            LstPackages.Columns[0].Width = (int)Math.Floor(availWidth * .4);
-            LstPackages.Columns[1].Width = (int)Math.Floor(availWidth * .3);
-            LstPackages.Columns[2].Width = (int)Math.Floor(availWidth * .3);
-            LstPackages.Columns[3].Width = pinnedWidth;
+                LstPackages.Columns[0].Width = (int)Math.Floor(availWidth * .4);
+                LstPackages.Columns[1].Width = (int)Math.Floor(availWidth * .3);
+                LstPackages.Columns[2].Width = (int)Math.Floor(availWidth * .3);
+                LstPackages.Columns[3].Width = pinnedWidth;
+            }
+            else
+            {
+                // TODO
+            }
         }
 
         // TODO why no dict?

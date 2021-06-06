@@ -14,7 +14,6 @@ namespace CandyShop
         public InstalledPage()
         {
             InitializeComponent();
-            // SplitContainer.Panel2Collapsed = true;
 
             this.Resize += new EventHandler((sender, e) =>
             {
@@ -34,9 +33,23 @@ namespace CandyShop
             get => _Packages;
             set {
                 _Packages = value;
-                foreach (ChocolateyPackage pckg in value)
+
+                if (!(_Packages[0] is ChocolateyProcess))
                 {
-                    if (!(CheckHideSuffixed.Checked && pckg.HasSuffix))
+                    CheckHideSuffixed.Visible = false;
+                    TextSearch.Width = LstPackages.Width;
+                }
+
+                foreach (IPackage pckg in value)
+                {
+                    if (pckg is ChocolateyPackage)
+                    {
+                        if (!(CheckHideSuffixed.Checked && ((ChocolateyPackage) pckg).HasSuffix))
+                        {
+                            LstPackages.Items.Add(PackageToListView(pckg));
+                        }
+                    }
+                    else
                     {
                         LstPackages.Items.Add(PackageToListView(pckg));
                     }
@@ -118,7 +131,7 @@ namespace CandyShop
             }
         }
 
-        private ListViewItem PackageToListView(ChocolateyPackage pckg)
+        private ListViewItem PackageToListView(IPackage pckg)
         {
             ListViewItem rtn = new ListViewItem(new string[]
             {
@@ -129,7 +142,7 @@ namespace CandyShop
             return rtn;
         }
 
-        private void InsertPackageInListView(ChocolateyPackage package)
+        private void InsertPackageInListView(IPackage package)
         {
             int latestPossibleIndex = _Packages.IndexOf(package);
             ListViewItem lastVisibilePackage = null;
@@ -159,12 +172,12 @@ namespace CandyShop
             string filterName = TextSearch.Text;
             bool hideSuffixed = CheckHideSuffixed.Checked;
 
-            foreach (ChocolateyPackage package in _Packages)
+            foreach (IPackage package in _Packages)
             {
                 bool packageAllowed = true;
                 
                 // determine whether package should be displayed
-                if (hideSuffixed && package.HasSuffix)
+                if (package is ChocolateyPackage && hideSuffixed && ((ChocolateyPackage) package).HasSuffix)
                 {
                     packageAllowed = false;
                 }
